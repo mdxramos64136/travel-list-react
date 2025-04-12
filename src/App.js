@@ -200,11 +200,5 @@ For instance:
  * If user don't put a description, he/she won't be able to submit the form:
  * if(!description) return; Remember: empty string is a falsy value.
  *
- * Setting the form to the initial state once it is submitted.
- * ChatGPT porqque new item não foi alterado?
-    setDescription("");
-    setQuantity(1);
-    const resetItem = { description, quantity, packed: false, id: Date.now() };
-    console.log(resetItem);
- * 
+
  */
