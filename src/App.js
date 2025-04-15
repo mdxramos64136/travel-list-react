@@ -7,11 +7,18 @@ const initialItems = [
 ];
 /****************************************************************** */
 export default function App() {
+  //Lifting up state to the nearesr parent component:
+  const [itemsState, setItemState] = useState([]); //empty array as default value
+
+  function handleAddItems(itemParam) {
+    setItemState((items) => [...items, itemParam]);
+  }
+
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItemProp={handleAddItems} />
+      <PackingList listItemsProp={itemsState} />
       <Stats />
     </div>
   );
@@ -22,14 +29,11 @@ function Logo() {
   return <h1>🛣️ Travel App 🏖️</h1>;
 }
 /******************************************************************** */
-function Form() {
-  //After create a state for the imnput field, create set the value property to the state value
-  //Go to <input> and do that!
-  // Then, listen to the change through onChange property and set setDescription
+function Form({ onAddItemProp }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(0);
 
-  //When you click on add button, tha page auto-reload. To avoid that , use e.preventDefault();
+  //When you click on add button, the page auto-reload. To avoid that , use e.preventDefault();
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -40,13 +44,13 @@ function Form() {
 
     // Getting date from the submission:
     const newItem = { description, quantity, packed: false, id: Date.now() };
+    onAddItemProp(newItem);
     console.log(newItem);
 
     //resetting the filds to their original state
     setDescription("");
     setQuantity(1);
     const resetItem = { description, quantity, packed: false, id: Date.now() };
-    console.log(resetItem);
   } //handleSubmit
 
   return (
@@ -70,7 +74,7 @@ function Form() {
         placeholder="Item..."
         value={description}
         onChange={(e) => {
-          console.log(e.target.value);
+          // console.log(e.target.value);
           setDescription(e.target.value);
         }}
       />
@@ -79,11 +83,11 @@ function Form() {
   );
 }
 /******************************************************************** */
-function PackingList() {
+function PackingList({ listItemsProp }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((itemArr) => (
+        {listItemsProp.map((itemArr) => (
           <Item
             itemProp={itemArr}
             key={itemArr.id}
