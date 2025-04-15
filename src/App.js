@@ -1,24 +1,28 @@
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: true },
-  { id: 3, description: "Charger", quantity: 1, packed: false },
-];
 /****************************************************************** */
 export default function App() {
   //Lifting up state to the nearesr parent component:
-  const [itemsState, setItemState] = useState([]); //empty array as default value
+  const [itemsState, setItemsState] = useState([]); //empty array as default value
 
   function handleAddItems(itemParam) {
-    setItemState((items) => [...items, itemParam]);
+    // here, (items) represents the actual value of the state (the array stored in the itemState)
+    // (items) => ... → is a callback passed to setItemsState, and React automatically provides the current state value as an argument
+    setItemsState((items) => [...items, itemParam]);
+  }
+
+  function handleDeleteItem(id) {
+    setItemsState((items) => items.filter((itemArr) => itemArr.id !== id));
   }
 
   return (
     <div className="app">
       <Logo />
       <Form onAddItemProp={handleAddItems} />
-      <PackingList listItemsProp={itemsState} />
+      <PackingList
+        listItemsProp={itemsState}
+        onDeleteItemProp={handleDeleteItem}
+      />
       <Stats />
     </div>
   );
@@ -31,7 +35,7 @@ function Logo() {
 /******************************************************************** */
 function Form({ onAddItemProp }) {
   const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   //When you click on add button, the page auto-reload. To avoid that , use e.preventDefault();
   function handleSubmit(e) {
@@ -50,7 +54,6 @@ function Form({ onAddItemProp }) {
     //resetting the filds to their original state
     setDescription("");
     setQuantity(1);
-    const resetItem = { description, quantity, packed: false, id: Date.now() };
   } //handleSubmit
 
   return (
@@ -83,7 +86,7 @@ function Form({ onAddItemProp }) {
   );
 }
 /******************************************************************** */
-function PackingList({ listItemsProp }) {
+function PackingList({ listItemsProp, onDeleteItemProp }) {
   return (
     <div className="list">
       <ul>
@@ -91,6 +94,7 @@ function PackingList({ listItemsProp }) {
           <Item
             itemProp={itemArr}
             key={itemArr.id}
+            onDeleteItemProp={onDeleteItemProp}
           />
         ))}
       </ul>
@@ -100,14 +104,14 @@ function PackingList({ listItemsProp }) {
 /******************************************************************** */
 //Using conditional operator to apply some style. If the item is packed(true),
 // then it will appear crossed out
-function Item({ itemProp }) {
+function Item({ itemProp, onDeleteItemProp }) {
   return (
     <li>
       <span style={itemProp.packed ? { textDecoration: "line-through" } : {}}>
         {itemProp.quantity + " "}
         {itemProp.description}
       </span>
-      <button>❌</button>
+      <button onClick={() => onDeleteItemProp(itemProp.id)}>❌</button>
     </li>
   );
 }
