@@ -15,6 +15,12 @@ export default function App() {
     setItemsState((items) => items.filter((itemArr) => itemArr.id !== id));
   }
 
+  function handleToggleItem(id) {
+    setItemsState((items) =>
+      items.map((itemArr) => (itemArr.id === id ? { ...itemArr, packed: !itemArr.packed } : itemArr))
+    );
+  }
+
   return (
     <div className="app">
       <Logo />
@@ -22,6 +28,7 @@ export default function App() {
       <PackingList
         listItemsProp={itemsState}
         onDeleteItemProp={handleDeleteItem}
+        onToggleItemProp={handleToggleItem}
       />
       <Stats />
     </div>
@@ -86,7 +93,7 @@ function Form({ onAddItemProp }) {
   );
 }
 /******************************************************************** */
-function PackingList({ listItemsProp, onDeleteItemProp }) {
+function PackingList({ listItemsProp, onDeleteItemProp, onToggleItemProp }) {
   return (
     <div className="list">
       <ul>
@@ -95,6 +102,7 @@ function PackingList({ listItemsProp, onDeleteItemProp }) {
             itemProp={itemArr}
             key={itemArr.id}
             onDeleteItemProp={onDeleteItemProp}
+            onToggleItemProp={onToggleItemProp}
           />
         ))}
       </ul>
@@ -104,9 +112,16 @@ function PackingList({ listItemsProp, onDeleteItemProp }) {
 /******************************************************************** */
 //Using conditional operator to apply some style. If the item is packed(true),
 // then it will appear crossed out
-function Item({ itemProp, onDeleteItemProp }) {
+function Item({ itemProp, onDeleteItemProp, onToggleItemProp }) {
   return (
     <li>
+      {/* “Quando o usuário clicar no checkbox, crie uma função anônima 
+      que chama onToggleItemProp (handleToggleItem) passando o id correto.” */}
+      <input
+        type="checkbox"
+        value={itemProp.packed}
+        onChange={() => onToggleItemProp(itemProp.id)}
+      />
       <span style={itemProp.packed ? { textDecoration: "line-through" } : {}}>
         {itemProp.quantity + " "}
         {itemProp.description}
