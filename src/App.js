@@ -21,6 +21,14 @@ export default function App() {
     );
   }
 
+  //////////////////////////////////////////////////////////////////////////////////
+  function handleClear() {
+    //Asking user to confirme the claer action. It returns a booleaan value. ok = true
+    const confirmation = window.confirm("Are you sure you want to DELETE all items?");
+
+    if (confirmation) setItemsState([]);
+  }
+
   return (
     <div className="app">
       <Logo />
@@ -29,6 +37,7 @@ export default function App() {
         listItemsProp={itemsState}
         onDeleteItemProp={handleDeleteItem}
         onToggleItemProp={handleToggleItem}
+        onHandleClear={handleClear}
       />
       <Stats itemsProp={itemsState} />
     </div>
@@ -93,7 +102,7 @@ function Form({ onAddItemProp }) {
   );
 }
 /******************************************************************** */
-function PackingList({ listItemsProp, onDeleteItemProp, onToggleItemProp }) {
+function PackingList({ listItemsProp, onDeleteItemProp, onToggleItemProp, onHandleClear }) {
   //create a state to deal with sort function
   const [sortBy, setSortBy] = useState("input");
 
@@ -107,7 +116,10 @@ function PackingList({ listItemsProp, onDeleteItemProp, onToggleItemProp }) {
   //id has the date/ time. Cronological order of input
   if (sortBy === "input") sortedItemsArr = listItemsProp.slice().sort((a, b) => a.id - b.id);
 
+  //
   if (sortBy === "packed") sortedItemsArr = listItemsProp.slice().sort((a, b) => Number(a.packed) - Number(b.packed));
+
+  /////////////////////////////////////////////////////////////////////////////////
   return (
     <div className="list">
       <ul>
@@ -128,6 +140,7 @@ function PackingList({ listItemsProp, onDeleteItemProp, onToggleItemProp }) {
           <option value="description">Sort by description</option>
           <option value="packed">Sort by pack status</option>
         </select>
+        <button onClick={onHandleClear}>Clear</button>
       </div>
     </div>
   );
